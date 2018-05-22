@@ -38,6 +38,8 @@ int* gc(int* stack_bottom, int* first_frame, int* stack_top, int* heap_start, in
   // prints, etc), to use mark, forward, and compact to collect garbage and
   // finally return the new value for EBX to use to start allocation from.
 
+  // There are helpful header comments for the different functions in gc.h
+
   return alloc_ptr;
 }
 
