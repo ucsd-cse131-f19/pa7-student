@@ -21,7 +21,7 @@
     allocation index stored in EBX
 
 */
-int* gc(int* stack_bottom, int* first_frame, int* stack_top, int* heap_start, int* heap_end);
+int* gc(int* stack_bottom, int* first_frame, int* stack_top, int* heap_start, int* heap_end, int* alloc_ptr);
 
 
 
