@@ -44,7 +44,7 @@ let terr_main name program expected =
   name>::test_err (wrap_prog program) name expected [default_heap_size]
 let t_f test_type = (fun (name,program,expected) ->
     test_type name program expected)
-let f_to_s fname = Runner.string_of_file ("input/" ^ fname ^ ".diamondback")
+let f_to_s fname = Runner.string_of_file ("input/" ^ fname ^ ".garter")
 let lst_main body = (f_to_s "list") ^ body ^ "))"
 let bst_main body = (f_to_s "bst") ^ body ^ "))"
 
@@ -72,11 +72,17 @@ let gc_tests = [
   " "(7,8)"
 ]
 
+(* This is just to show you how you can write tests that use bst and lst *)
+let data_test = [
+  t_prog "insert" (bst_main "(insert (insert (tup) 5 true) 6 false)") "((5,true),(),((6,false),(),()))"
+]
+
+
 (* Add tests here as you write them! *)
 
 let suite =
   "suite">:::
-  oom @ gc_tests
+  oom @ gc_tests @ bst_test
 
 let () =
   run_test_tt_main suite
