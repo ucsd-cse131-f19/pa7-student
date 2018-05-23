@@ -30,7 +30,7 @@ int* gc(int* stack_bottom, int* first_frame, int* stack_top, int* heap_start, in
   mark()
 
   Traverse the heap, starting from the data on the stack, and mark all
-  reachable data as live, by setting the second word to 0x00000001
+  reachable data as live, by setting the first word to 0x00000001
 
   Arguments:
 
