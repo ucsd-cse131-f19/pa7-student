@@ -73,7 +73,7 @@ let gc_tests = [
 ]
 
 (* This is just to show you how you can write tests that use bst and lst *)
-let data_test = [
+let bst_test = [
   t_prog "insert" (bst_main "(insert (insert (tup) 5 true) 6 false)") "((5,true),(),((6,false),(),()))"
 ]
 
