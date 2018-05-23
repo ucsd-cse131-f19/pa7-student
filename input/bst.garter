@@ -1,0 +1,22 @@
+((define node      (k v) (tup (tup k v) (tup) (tup)))
+ (define getKeyVal (n)   (tup-get n 0))
+ (define getKey    (n)   (tup-get (getKeyVal n) 0))
+ (define getVal    (n)   (tup-get (getKeyVal n) 1))
+ (define getLeft   (n)   (tup-get n 1))
+ (define getRight  (n)   (tup-get n 2))
+ (define isNull    (n)   (if (== n (tup)) true false))
+ (define insert    (n k v) (if (isNull n) (node k v) (if (> k (getKey n)) (tup (getKeyVal n) (getLeft n) (insert (getRight n) k v)) (tup (getKeyVal n) (insert (getLeft n) k v) (getRight n)))))
+ (define lookup    (n k) (if (isNull n) false (if (== k (getKey n)) (getVal n) (if (> k (getKey n)) (lookup (getRight n) k) (lookup (getLeft n) k)))))
+ (define height    (n)   (if (isNull n) 0 (let ((lHeight (+ 1 (height (getLeft n)))) (rHeight (+ 1 (height (getRight n))))) (if (> lHeight rHeight) lHeight rHeight))))
+ (define size      (n)   (if (isNull n) 0 (+ 1 (+ (size (getLeft n)) (size (getRight n))))))
+
+ (define link      (h t) (tup h t))
+
+ (define inorder_keys_h (n l)   (if (isNull n) l (if (isNull (getRight n)) (inorder_keys_h (getLeft n) (link (getKey n) l)) (inorder_keys_h (getLeft n) (link (getKey n) (inorder_keys_h (getRight n) l))))))
+ (define inorder_keys     (n)     (inorder_keys_h n false))
+
+ (define reverse_bst   (n nn)  (if (isNull (getLeft n)) (if (isNull (getRight n)) (insert nn (getVal n) (getKey n)) (let ((rn (reverse_bst (getRight n) nn))) (insert rn (getVal n) (getKey n)))) (if (isNull (getRight n)) (let ((ln (reverse_bst (getLeft n) nn))) (insert ln (getVal n) (getKey n))) (let ((ln (reverse_bst (getLeft n) nn)) (rn (reverse_bst (getRight n) ln))) (insert rn (getVal n) (getKey n))))))
+ 
+ (define inorder_values   (n)     (if (isNull n) false (inorder_keys (reverse_bst n (tup)))))
+ 
+ (define our_main      (input) 
