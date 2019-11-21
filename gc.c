@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "print.h"
+#include "gc.h"
+
 // STUDENT: Change this to 1 in order to print
 #define DEBUG 0
 
@@ -9,37 +12,26 @@
             do { if (DEBUG) fprintf(stdout, __VA_ARGS__); } while (0)
 
 
-void print_mem(int* heap, int size) {
-  for(int i = 0; i < size; i += 1) {
-    DEBUG_PRINT("  %d/%p: %p (%d)\n", i, (heap + i), (int*)(*(heap + i)), *(heap + i));
-  }
-}
-
-int* mark(int* stack_top, int* first_frame, int* stack_bottom, int* max_addr) {
-  return NULL;
-}
-
-void forward(int* stack_top, int* first_frame, int* stack_bottom, int* heap_start, int* max_address) {
-  return;
-}
-
-int* compact(int* heap_start, int* max_address) {
-  return NULL;
-}
-
-int* gc(int* stack_bottom, int* first_frame, int* stack_top, int* heap_start, int* heap_end, int* alloc_ptr) {
-
-  DEBUG_PRINT("");
-  print_mem(stack_top, 10);
-  DEBUG_PRINT("\n\n");
-  print_mem(heap_start, 10);
-
+int64_t* gc(int64_t* stack_bottom,
+			int64_t* first_frame,
+			int64_t* stack_top,
+			int64_t* heap_start,
+			int64_t* heap_end,
+			int64_t* alloc_ptr) {
+  DEBUG_PRINT("starting GC...\n");
+  DEBUG_PRINT("\tstack top    = 0x%p\n\tstack_bottom = 0x%p\n\tfirst_frame  = 0x%p\n\theap start   = 0x%p\n\theap_end     = 0x%p\n",
+			  stack_top,
+			  stack_bottom,
+			  first_frame,
+			  heap_start,
+			  heap_end);
+  
   // STUDENT: You will change this code (and edit anything you like about debug
-  // prints, etc), to use mark, forward, and compact to collect garbage and
-  // finally return the new value for EBX to use to start allocation from.
+  // prints, etc), to collect garbage and finally return the new value for R15
+  // to use to start allocation from.
 
-  // There are helpful header comments for the different functions in gc.h
-
+  DEBUG_PRINT("(gc) Not yet implemented.");
+  
   return alloc_ptr;
 }
 
