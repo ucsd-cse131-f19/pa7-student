@@ -26,7 +26,7 @@ output/%.o: output/%.s
 
 output/%.s: input/%.boa compilers/main
 	mkdir -p output
-	./main $< > $@
+	./compilers/main $< > $@
 
 clean:
 	rm -rf output/*.o output/*.s output/*.dSYM output/*.run *.log
