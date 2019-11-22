@@ -22,9 +22,9 @@ extern int64_t* STACK_BOTTOM asm("STACK_BOTTOM");
 extern int64_t* FINAL_HEAP_PTR asm("FINAL_HEAP_PTR");
 
 extern int64_t* try_gc(int64_t* alloc_ptr,
-					   int64_t words_needed,
-					   int64_t* first_frame,
-					   int64_t* stack_top) asm("try_gc");
+                       int64_t words_needed,
+                       int64_t* first_frame,
+                       int64_t* stack_top) asm("try_gc");
 
 int64_t* HEAP_START;     // This is set in setup_heap
 int64_t* HEAP_END;       // This is set in setup_heap
@@ -70,7 +70,7 @@ int64_t print_rec(int64_t val) {
   } else if (val == 0) { // null
     printf("null");
   } else if ((val & 7L) == 0) { // 7 has 111 at the end
-	Data* d = (Data*) val;
+    Data* d = (Data*) val;
     printf("(%s ", d->name);
     for(int i = 0; i < d->size; i += 1) {
       print_rec(d->elements[i]);
@@ -113,11 +113,11 @@ void error(int64_t error_code) {
 
   HEAP_START is passed as an argument to our_code_starts_here, and should
              point to the first address the program can store heap-allocated
-	         data at.
+             data at.
   HEAP_END   is accessed directly by our_code_starts_here, and used to
-             determine when to call try_gc(). It should point to the 
-			 address AFTER the last word on the heap.
-  
+             determine when to call try_gc(). It should point to the
+             address AFTER the last word on the heap.
+
   You may want to change this function depending on what GC algorithm you
   choose to implement.
 
@@ -133,12 +133,12 @@ void setup_heap(int64_t heap_size) {
 
 /*
   STUDENT: You do not need to change this main function, but it's worth reading!
-  
+
   It does three things that are interesting relative to Diamondback:
 
   1. It uses the first command-line argument as the initial size of the heap
      (in words)
-  2. It initializes the heap by calling setup_heap(), setting global variables 
+  2. It initializes the heap by calling setup_heap(), setting global variables
      that are shared with our_code_starts_here and try_gc functions.
   3. It uses an optional third command-line argument to determine if it should
      print the heap content at the end of the program's execution.
@@ -149,53 +149,53 @@ void setup_heap(int64_t heap_size) {
 int main(int argc, char** argv) {
   char * endptr;
   extern int errno;
-  
+
   int64_t input_val = 1;
   int64_t dump_heap = 0;
   int64_t heap_size = DEFAULT_HEAP_SIZE;
-  
+
   if (argc > 1) {
-	// Read heap size
-	endptr = (char*) &argv[1];
-	errno = 0;
-	int64_t r = strtol(argv[1], &endptr, 10);
+    // Read heap size
+    endptr = (char*) &argv[1];
+    errno = 0;
+    int64_t r = strtol(argv[1], &endptr, 10);
 
-	if (*endptr != '\0' || errno || r < 0) error(7);
+    if (*endptr != '\0' || errno || r < 0) error(7);
 
-	heap_size = r;
+    heap_size = r;
   }
 
   if (argc > 2) {
-	// Read input
-	endptr = (char*) &argv[2];
-	errno = 0;
-	int64_t r = strtol(argv[2], &endptr, 10);
+    // Read input
+    endptr = (char*) &argv[2];
+    errno = 0;
+    int64_t r = strtol(argv[2], &endptr, 10);
 
-	if (*endptr != '\0') error(5);
-	else if (errno || r < BOA_MIN || r > BOA_MAX) error(4);
+    if (*endptr != '\0') error(5);
+    else if (errno || r < BOA_MIN || r > BOA_MAX) error(4);
 
-	input_val = r << 1 | 1;
+    input_val = r << 1 | 1;
   }
 
   if (argc > 3) {
-	// Read dump heap argument
-	const char* arg = (char*) argv[3];
-	
-	if (strcmp(arg, "dump") == 0) {
-	  dump_heap = 1;
-	}
+    // Read dump heap argument
+    const char* arg = (char*) argv[3];
+
+    if (strcmp(arg, "dump") == 0) {
+      dump_heap = 1;
+    }
   }
 
-  setup_heap(heap_size);  
+  setup_heap(heap_size);
   int64_t result = our_code_starts_here(HEAP_START, input_val);
   print(result);
 
   if (dump_heap) {
-  	print_heap(HEAP_START, FINAL_HEAP_PTR);
+      print_heap(HEAP_START, FINAL_HEAP_PTR);
   }
 
   free(HEAP_START);
-  
+
   return 0;
 }
 
@@ -218,18 +218,18 @@ int main(int argc, char** argv) {
   words_needed, and more words in the given heap space if possible.
 */
 int64_t* try_gc(int64_t* alloc_ptr,
-				int64_t  words_needed,
-				int64_t* first_frame,
-				int64_t* stack_top) {
-  
+                int64_t  words_needed,
+                int64_t* first_frame,
+                int64_t* stack_top) {
+
   if(HEAP_START == alloc_ptr) {
-	fprintf(stderr, "Allocation of %ld words too large for %ld-word heap\n", words_needed, HEAP_END - HEAP_START);
+    fprintf(stderr, "Allocation of %ld words too large for %ld-word heap\n", words_needed, HEAP_END - HEAP_START);
     free(HEAP_START);
     exit(10);
   }
 
   int64_t* new_r15 = gc(STACK_BOTTOM, first_frame, stack_top, HEAP_START, HEAP_END, alloc_ptr);
-  
+
   if((new_r15 + words_needed) > HEAP_END) {
     fprintf(stderr, "Out of memory: needed %ld words, but only %ld remain after collection\n", words_needed, (HEAP_END - new_r15));
     free(HEAP_START);
@@ -238,4 +238,3 @@ int64_t* try_gc(int64_t* alloc_ptr,
 
   return new_r15;
 }
-
