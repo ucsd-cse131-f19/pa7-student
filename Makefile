@@ -2,10 +2,12 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
   FORMAT=elf64
   NOPIE=-nopie
+  MAIN=./compilers/smain
 else
 ifeq ($(UNAME), Darwin)
-  FORMAT=macho6
+  FORMAT=macho64
   NOPIE=-Wl,-no_pie
+  MAIN=./compilers/main-osx
 endif
 endif
 
@@ -26,7 +28,7 @@ output/%.o: output/%.s
 
 output/%.s: input/%.boa compilers/main
 	mkdir -p output
-	./compilers/main $< > $@
+	$(MAIN) $< > $@
 
 clean:
 	rm -rf output/*.o output/*.s output/*.dSYM output/*.run *.log
