@@ -54,26 +54,8 @@ let run_no_vg (args : string list) (program_name : string) : result =
   List.iter unlink [rstdout_name; rstderr_name];
   result
 
-let run_vg (args : string list) (program_name : string) : result =
-  let (rstdout, rstdout_name, rstderr, rstderr_name, rstdin) = make_tmpfiles "run" in
-  let ran_pid = Unix.create_process "valgrind"  (Array.of_list ([""; (program_name ^ ".run")]@args)) rstdin rstdout rstderr in
-  let (_, status) = waitpid [] ran_pid in
-  let vg_str = string_of_file rstderr_name in
-  let vg_ok = String.exists vg_str "0 errors from 0 contexts" in
-  let result = match (status, vg_ok) with
-    | WEXITED 0, true -> Right(string_of_file rstdout_name)
-    | WEXITED 0, false -> Left("Stdout: " ^ (string_of_file rstdout_name) ^ "\n" ^ "Valgrind: \n" ^ vg_str)
-    | WEXITED n, _ -> Left(sprintf "Error %d: %s" n vg_str)
-    | WSIGNALED n, _ ->
-      Left(sprintf "Signalled with %d while running %s." n program_name)
-    | WSTOPPED n, _ ->
-      Left(sprintf "Stopped with signal %d while running %s." n program_name) in
-  List.iter close [rstdout; rstderr; rstdin];
-  List.iter unlink [rstdout_name; rstderr_name];
-  result
-
 let run program_string (compiler: string) (out : string) (runner : string -> result) : result =
-    let saveSrcfile = open_out ( "input/" ^ out ^ ".garter") in
+    let saveSrcfile = open_out ( "input/" ^ out ^ ".boa") in
     fprintf saveSrcfile "%s" program_string;
     close_out saveSrcfile;
     let (bstdout, bstdout_name, bstderr, bstderr_name, bstdin) = make_tmpfiles "build" in
@@ -102,11 +84,6 @@ let run program_string (compiler: string) (out : string) (runner : string -> res
 let test_run program_str outfile expected args _ =
   let result = run program_str "main" outfile (run_no_vg args) in
     assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
-
-let test_vg_run program_str outfile expected args _ =
-  let result = run program_str "main" outfile (run_vg args) in
-  assert_equal (Right(expected ^ "\n")) result ~printer:either_printer
-
 
 let is_running_error message = String.exists message "while running"
 
