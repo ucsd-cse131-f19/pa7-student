@@ -2,7 +2,7 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
   FORMAT=elf64
   NOPIE=-nopie
-  MAIN=./compilers/smain
+  MAIN=./compilers/main
 else
 ifeq ($(UNAME), Darwin)
   FORMAT=macho64
@@ -26,7 +26,7 @@ output/%.run: output/%.o main.c gc.c print.c
 output/%.o: output/%.s
 	nasm -f $(FORMAT) -o $@ $<
 
-output/%.s: input/%.boa compilers/main
+output/%.s: input/%.boa
 	mkdir -p output
 	$(MAIN) $< > $@
 
